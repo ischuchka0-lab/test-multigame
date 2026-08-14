@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retro Game Player</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: sans-serif;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    #game-title {
+      margin-bottom: 15px;
+      font-size: 1.4rem;
+    }
+    #emulator-container {
+      width: 640px;
+      height: 480px;
+      max-width: 95vw;
+      max-height: 80vh;
+      border: 2px solid #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 id="game-title">Загрузка игры...</h1>
+
+  <div id="emulator-container">
+    <div id="game"></div>
+  </div>
+
+  <script>
+    // Считываем параметры из URL-строки
+    const urlParams = new URLSearchParams(window.location.search);
+    const romFile = urlParams.get('rom');   // Название файла (например, sonic.bin)
+    const coreName = urlParams.get('core') || 'sega'; // Ядро (по умолчанию sega)
+    const gameName = urlParams.get('title') || 'Retro Game'; // Название игры
+
+    if (!romFile) {
+      document.getElementById('game-title').innerText = 'Ошибка: Игра не указана!';
+    } else {
+      document.getElementById('game-title').innerText = gameName;
+
+      EJS_player = '#game';
+      EJS_core = coreName;
+      EJS_gameUrl = romFile; // Подставляет нужный файл из папки
+      EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+
+      const script = document.createElement('script');
+      script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
+      document.body.appendChild(script);
+    }
+  </script>
+
+</body>
+</html>
