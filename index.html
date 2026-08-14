@@ -3,55 +3,96 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Retro Game Player</title>
+  <title>Retro Games Mini App</title>
   <style>
     body {
       background-color: #121212;
       color: #ffffff;
-      font-family: sans-serif;
+      font-family: system-ui, -apple-system, sans-serif;
       margin: 0;
+      padding: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
+      box-sizing: border-box;
     }
     #game-title {
-      margin-bottom: 15px;
-      font-size: 1.4rem;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      text-align: center;
     }
     #emulator-container {
       width: 640px;
       height: 480px;
       max-width: 95vw;
-      max-height: 80vh;
+      max-height: 75vh;
       border: 2px solid #333;
+      border-radius: 8px;
+      overflow: hidden;
+      display: none; /* Скрыт, пока не выбрана игра */
+    }
+    /* Стиль меню выбора игр */
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 320px;
+    }
+    .game-btn {
+      background-color: #2b2b2b;
+      color: #ffffff;
+      border: 1px solid #444;
+      padding: 14px 20px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+    .game-btn:hover {
+      background-color: #3b3b3b;
+    }
+    .game-btn:active {
+      transform: scale(0.98);
     }
   </style>
 </head>
 <body>
 
-  <h1 id="game-title">Загрузка игры...</h1>
+  <h1 id="game-title">Выберите игру</h1>
 
+  <!-- Меню выбора (показывается, если в URL нет параметров) -->
+  <div id="menu" class="menu">
+    <a class="game-btn" href="?rom=sonic.bin&core=sega&title=Sonic%20the%20Hedgehog">Sonic the Hedgehog</a>
+    <a class="game-btn" href="?rom=predator2.bin&core=sega&title=Predator%202">Predator 2</a>
+    <a class="game-btn" href="?rom=earthworm_jim_2.gba&core=gba&title=Earthworm%20Jim%202">Earthworm Jim 2</a>
+  </div>
+
+  <!-- Контейнер с эмулятором -->
   <div id="emulator-container">
     <div id="game"></div>
   </div>
 
   <script>
-    // Считываем параметры из URL-строки
     const urlParams = new URLSearchParams(window.location.search);
-    const romFile = urlParams.get('rom');   // Название файла (например, sonic.bin)
-    const coreName = urlParams.get('core') || 'sega'; // Ядро (по умолчанию sega)
-    const gameName = urlParams.get('title') || 'Retro Game'; // Название игры
+    const romFile = urlParams.get('rom');
+    const coreName = urlParams.get('core') || 'sega';
+    const gameTitle = urlParams.get('title') || 'Retro Game';
 
-    if (!romFile) {
-      document.getElementById('game-title').innerText = 'Ошибка: Игра не указана!';
-    } else {
-      document.getElementById('game-title').innerText = gameName;
+    // Если в ссылке передан параметр rom, запускаем эмулятор
+    if (romFile) {
+      document.getElementById('menu').style.display = 'none'; // Скрываем меню
+      document.getElementById('emulator-container').style.display = 'block'; // Показываем эмулятор
+      document.getElementById('game-title').innerText = gameTitle;
 
       EJS_player = '#game';
       EJS_core = coreName;
-      EJS_gameUrl = romFile; // Подставляет нужный файл из папки
+      EJS_gameUrl = romFile;
       EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
 
       const script = document.createElement('script');
